@@ -11,12 +11,18 @@ import (
 
 // TomlConfig - config structure
 type TomlConfig struct {
+	General struct{
+		Listen string
+	}
 	Ami struct {
 		Host string
 		Port int
 		Username string
 		Password string
 	} `toml:"ami"`
+	Asterisk struct{
+		Context string
+	}
 }
 
 var config = new(TomlConfig).readConfig()
