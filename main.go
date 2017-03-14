@@ -4,9 +4,9 @@ import (
 	"github.com/bit4bit/gami"
 	"github.com/op/go-logging"
 
-	"asterisk-custom-api/internal/utils/config"
+	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
 
-	"asterisk-custom-api/internal/platform/ami"
+	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"strconv"
 )
 
