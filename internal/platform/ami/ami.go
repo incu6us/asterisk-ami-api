@@ -88,7 +88,6 @@ func (a *ami) Run() error {
 
 func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gami.AMIResponse, error) {
 	var actionChanResponse <-chan *gami.AMIResponse
-	//
 	var amiParams = make(map[string]string)
 	var err error
 
@@ -104,12 +103,10 @@ func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gam
 		return nil, err
 	}
 
-	//actionResponse = <-actionChanResponse
-
 	return actionChanResponse, err
 }
 
-func (a *ami) Originate(params map[string]string) (*gami.AMIResponse, error)  {
+func (a *ami) Originate(params map[string]string, async bool) (interface{}, error)  {
 	var actionResponse *gami.AMIResponse
 	var actionAsyncResponse <-chan *gami.AMIResponse
 	var err error
@@ -118,15 +115,20 @@ func (a *ami) Originate(params map[string]string) (*gami.AMIResponse, error)  {
 		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 	}
 
-	actionResponse = <-actionAsyncResponse
-
-	return actionResponse, err
+	if !async {
+		actionResponse = <-actionAsyncResponse
+		return actionResponse, err
+	}else{
+		message := make(map[string]string)
+		message["Message"] = "Originate successfully queued"
+		return gami.AMIResponse{ID: params["ActionID"], Params: message, Status: "Success"}, err
+	}
 }
 
 type AMI interface {
 	Run() error
 	CustomAction(action string, params map[string]string) (<-chan *gami.AMIResponse, error)
-	Originate(params map[string]string) (*gami.AMIResponse, error)
+	Originate(params map[string]string, async bool) (interface{}, error)
 }
 
 func GetAMI(host, user, pass string) AMI {

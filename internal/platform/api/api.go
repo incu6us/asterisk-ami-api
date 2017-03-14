@@ -34,7 +34,7 @@ var apis = APIs{
 	API{
 		"callSipToMSISDN",
 		"get",
-		"/call/{SIPID}/{MSISDN}",
+		"/call/{SIPID}/{MSISDN}",  // ?async=false # default
 		handler.GetHandler().CallFromSipToMSISDN,
 	},
 }

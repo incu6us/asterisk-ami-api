@@ -8,12 +8,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"strconv"
-	"github.com/bit4bit/gami"
 )
 
 type apiHandler struct {
 	ContentType string
-	amiClient ami.AMI
+	amiClient   ami.AMI
 }
 
 type response struct {
@@ -25,9 +24,9 @@ const (
 )
 
 var (
-	amiResponse *gami.AMIResponse
-	err error
-	log = logging.MustGetLogger("main")
+	//amiResponse *gami.AMIResponse
+	err  error
+	log  = logging.MustGetLogger("main")
 	conf = config.GetConfig()
 )
 
@@ -37,7 +36,7 @@ func (a *apiHandler) amiInit() {
 	a.amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
 	if err = a.amiClient.Run(); err != nil {
 		log.Error("Error:", err)
-	}else {
+	} else {
 		log.Info("AMI connection established")
 	}
 
@@ -45,7 +44,7 @@ func (a *apiHandler) amiInit() {
 
 func (a *apiHandler) setJsonHeader(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", a.ContentType)
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (a apiHandler) print(w http.ResponseWriter, r *http.Request, message interface{}) {
@@ -57,19 +56,25 @@ func (a apiHandler) print(w http.ResponseWriter, r *http.Request, message interf
 	}
 }
 
-func (a *apiHandler) Test(w http.ResponseWriter, r *http.Request){
+func (a *apiHandler) Test(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	a.print(w, r, vars)
 }
 
-func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request){
+func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	sipId := vars["SIPID"]
 	msisdn := vars["MSISDN"]
+	async, _ := strconv.ParseBool(r.URL.Query().Get("async"))
+
+	var amiResponse interface{}
+
+	log.Debug("vars", vars, async)
 
 	var params = make(map[string]string)
-	params["Channel"] = "SIP/"+sipId
-	params["CallerID"] = "manual_"+msisdn
+	params["Channel"] = "SIP/" + sipId
+	params["CallerID"] = "manual_" + msisdn
 	params["MaxRetries"] = "0"
 	params["RetryTime"] = "1"
 	params["WaitTime"] = "20"
@@ -79,11 +84,14 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	log.Debug("Originate: %v", params)
 
-	if amiResponse, err = a.amiClient.Originate(params); err != nil || amiResponse.Status == "Error" {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse.Status)
+	if amiResponse, err = a.amiClient.Originate(params, async); err != nil {
+		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		a.print(w, r, err)
+		return
 	}
 
 	a.print(w, r, amiResponse)
+
 }
 
 type ApiHandler interface {
