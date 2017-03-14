@@ -1,0 +1,7 @@
+package: asterisk-custom-api
+import:
+- package: github.com/naoina/toml
+  version: ^0.1.0
+- package: github.com/op/go-logging
+  version: ^1.0.0
+- package: github.com/bit4bit/gami

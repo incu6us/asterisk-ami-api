@@ -1,0 +1,16 @@
+hash: 9167f1511420e285466ba54f087f0489b7a24f396a89e7bea0d0aedee73d8150
+updated: 2017-03-14T12:52:51.244304098+02:00
+imports:
+- name: github.com/bit4bit/gami
+  version: 94e6a8a29ab83a23f191883d7ded0b01269b5717
+  subpackages:
+  - event
+- name: github.com/naoina/go-stringutil
+  version: 6b638e95a32d0c1131db0e7fe83775cbea4a0d0b
+- name: github.com/naoina/toml
+  version: 751171607256bb66e64c9f0220c00662420c38e9
+  subpackages:
+  - ast
+- name: github.com/op/go-logging
+  version: b2cb9fa56473e98db8caba80237377e83fe44db5
+testImports: []
