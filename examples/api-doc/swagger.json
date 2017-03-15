@@ -37,18 +37,39 @@
       ],
       "get": {
         "operationId": "callFromSipToMSISDN",
-        "summary": "/call/{SIPID}/{MSISDN}",
+        "summary": "/call/{SIPID}/{MSISDN}?async={async}",
+        "tags": [
+          "Call API"
+        ],
+        "parameters": [
+          {
+            "name": "async",
+            "in": "query",
+            "description": "if async=true, then app will not wait for SIP events (like: pickup or hangup)",
+            "type": "boolean",
+            "default": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "type": "object",
-              "description": "Result"
+              "$ref": "#/definitions/simpleResult"
             }
           }
         }
       }
     }
   },
-  "definitions": {}
+  "definitions": {
+    "simpleResult": {
+      "title": "simpleResult",
+      "type": "object",
+      "properties": {
+        "Result": {
+          "type": "object"
+        }
+      }
+    }
+  }
 }
