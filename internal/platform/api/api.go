@@ -38,8 +38,14 @@ func NewHandler() *mux.Router {
 var apis = APIs{
 	API{
 		"callSipToMSISDN",
-		"get",
+		"GET",
 		"/call/{SIPID}/{MSISDN}", // ?async=false # default
 		handler.GetHandler().CallFromSipToMSISDN,
+	},
+	API{
+		"sendSMS",
+		"POST",
+		"/modem/send/sms/{modem}/{MSISDN}",
+		handler.GetHandler().SendSms,
 	},
 }

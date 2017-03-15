@@ -17,6 +17,51 @@
     "application/json"
   ],
   "paths": {
+    "/modem/send/sms/{modem}/{MSISDN}": {
+      "parameters": [
+        {
+          "name": "modem",
+          "in": "path",
+          "description": "modem id from asterisk cli",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "MSISDN",
+          "in": "path",
+          "description": "real MSISDN number",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "post": {
+        "operationId": "modemSendSms",
+        "summary": "/modem/send/sms/{modem}/{MSISDN}",
+        "tags": [
+          "API"
+        ],
+        "consumes": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/simpleResult"
+            }
+          }
+        }
+      }
+    },
     "/call/{SIPID}/{MSISDN}": {
       "parameters": [
         {
@@ -39,7 +84,7 @@
         "operationId": "callFromSipToMSISDN",
         "summary": "/call/{SIPID}/{MSISDN}?async={async}",
         "tags": [
-          "Call API"
+          "API"
         ],
         "parameters": [
           {
