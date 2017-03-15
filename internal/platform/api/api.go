@@ -6,6 +6,10 @@ import (
 	"github.com/incu6us/asterisk-ami-api/internal/platform/api/handler"
 )
 
+const (
+	PATH_PREFIX = "/api/v1/"
+)
+
 type API struct {
 	Name        string
 	Method      string
@@ -21,7 +25,8 @@ func NewHandler() *mux.Router {
 
 	for _, api := range apis {
 		router.
-		Methods(api.Method).
+		PathPrefix(PATH_PREFIX).
+			Methods(api.Method).
 			Path(api.Pattern).
 			Name(api.Name).
 			Handler(api.HandlerFunc)
@@ -34,7 +39,7 @@ var apis = APIs{
 	API{
 		"callSipToMSISDN",
 		"get",
-		"/call/{SIPID}/{MSISDN}",  // ?async=false # default
+		"/call/{SIPID}/{MSISDN}", // ?async=false # default
 		handler.GetHandler().CallFromSipToMSISDN,
 	},
 }
