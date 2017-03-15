@@ -111,6 +111,7 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	if body, err = ioutil.ReadAll(r.Body); err != nil {
 		a.print(w, r, err)
+		return 
 	}
 
 	var params = make(map[string]string)
