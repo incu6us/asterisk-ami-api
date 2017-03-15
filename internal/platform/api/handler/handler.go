@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"strconv"
+	"github.com/bit4bit/gami"
+	"io/ioutil"
 )
 
 type apiHandler struct {
@@ -25,12 +27,13 @@ const (
 
 var (
 	//amiResponse *gami.AMIResponse
-	err  error
-	log  = logging.MustGetLogger("main")
-	conf = config.GetConfig()
+	hendler *apiHandler
+	log     = logging.MustGetLogger("main")
+	conf    = config.GetConfig()
 )
 
 func (a *apiHandler) amiInit() {
+	var err error
 	var host = conf.Ami.Host + ":" + strconv.Itoa(conf.Ami.Port)
 
 	a.amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
@@ -48,7 +51,6 @@ func (a *apiHandler) setJsonHeader(w http.ResponseWriter) {
 }
 
 func (a apiHandler) print(w http.ResponseWriter, r *http.Request, message interface{}) {
-	defer r.Body.Close()
 	a.setJsonHeader(w)
 
 	if encodeError := json.NewEncoder(w).Encode(response{message}); encodeError != nil {
@@ -62,6 +64,10 @@ func (a *apiHandler) Test(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var err error
+
 	vars := mux.Vars(r)
 
 	sipId := vars["SIPID"]
@@ -94,18 +100,48 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 }
 
+func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var err error
+	var body []byte
+	var amiResponse <-chan *gami.AMIResponse
+
+	vars := mux.Vars(r)
+
+	if body, err = ioutil.ReadAll(r.Body); err != nil {
+		a.print(w, r, err)
+	}
+
+	var params = make(map[string]string)
+	params["Device"] = vars["modem"]
+	params["Number"] = vars["MSISDN"]
+	params["Message"] = string(body)
+
+	log.Debug("Send SMS: %v", params)
+
+	if amiResponse, err = a.amiClient.CustomAction("DongleSendSMS", params); err != nil {
+		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		a.print(w, r, err)
+		return
+	}
+
+	resp := <-amiResponse
+	a.print(w, r, resp)
+}
+
 type ApiHandler interface {
 	Test(w http.ResponseWriter, r *http.Request)
 	CallFromSipToMSISDN(http.ResponseWriter, *http.Request)
+	SendSms(w http.ResponseWriter, r *http.Request)
 }
 
 func GetHandler() ApiHandler {
-	var a *apiHandler
 
-	if a == nil {
-		a = &apiHandler{ContentType: CONTENT_TYPE}
-		a.amiInit()
+	if hendler == nil {
+		hendler = &apiHandler{ContentType: CONTENT_TYPE}
+		hendler.amiInit()
 	}
 
-	return a
+	return hendler
 }
