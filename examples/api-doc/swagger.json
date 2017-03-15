@@ -1,0 +1,54 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "asterisk-ami-api",
+    "description": ""
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/call/{SIPID}/{MSISDN}": {
+      "parameters": [
+        {
+          "name": "SIPID",
+          "in": "path",
+          "description": "SIP number",
+          "required": true,
+          "type": "number",
+          "default": 1001
+        },
+        {
+          "name": "MSISDN",
+          "in": "path",
+          "description": "MSISDN (380XXX.)",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "operationId": "callFromSipToMSISDN",
+        "summary": "/call/{SIPID}/{MSISDN}",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "description": "Result"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {}
+}
