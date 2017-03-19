@@ -12,4 +12,4 @@ script:
   - go build -v .
 
 after_success:
-  - echo $DEPLOY_URL
+  - curl -i $DEPLOY_URL
