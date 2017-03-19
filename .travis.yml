@@ -12,4 +12,4 @@ script:
   - go build -v .
 
 after_success:
-  - curl -i $DEPLOY_URL
+  - curl -i -H $AUTH $DEPLOY_URL
