@@ -6,7 +6,10 @@ go:
 branches:
   only:
     - master
-    
+
 script:
   - go test -v .
   - go build -v .
+
+after_success:
+  - echo $DEPLOY_URL
