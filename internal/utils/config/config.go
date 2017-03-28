@@ -25,11 +25,15 @@ type TomlConfig struct {
 	}
 }
 
-var config = new(TomlConfig).readConfig()
+var config *TomlConfig
 var logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.LUTC|log.Lshortfile)
 
 // GetConfig - get current TOML-config
 func GetConfig() *TomlConfig {
+	if config == nil {
+		config = new(TomlConfig).readConfig()
+	}
+
 	return config
 }
 
