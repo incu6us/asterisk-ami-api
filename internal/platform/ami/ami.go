@@ -3,9 +3,9 @@ package ami
 import (
 	"github.com/bit4bit/gami"
 	"github.com/op/go-logging"
-	"time"
 	"math/rand"
 	"strings"
+	"time"
 )
 
 type ami struct {
@@ -66,11 +66,11 @@ func (a *ami) Run() error {
 
 				case err := <-amiClient.Error:
 					log.Error("error:", err)
-				//wait events and process
-				//case ev := <-amiClient.Events:
-				//	log.Error("Event Detect:", *ev)
-				//	//if want type of events
-				//	log.Error("EventType:", event.New(ev))
+					//wait events and process
+					//case ev := <-amiClient.Events:
+					//	log.Error("Event Detect:", *ev)
+					//	//if want type of events
+					//	log.Error("EventType:", event.New(ev))
 				}
 			}
 		}()
@@ -106,7 +106,7 @@ func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gam
 	return actionChanResponse, err
 }
 
-func (a *ami) Originate(params map[string]string, async bool) (interface{}, error)  {
+func (a *ami) Originate(params map[string]string, async bool) (interface{}, error) {
 	var actionResponse *gami.AMIResponse
 	var actionAsyncResponse <-chan *gami.AMIResponse
 	var err error
@@ -118,7 +118,7 @@ func (a *ami) Originate(params map[string]string, async bool) (interface{}, erro
 	if !async {
 		actionResponse = <-actionAsyncResponse
 		return actionResponse, err
-	}else{
+	} else {
 		message := make(map[string]string)
 		message["Message"] = "Originate successfully queued"
 		return gami.AMIResponse{ID: params["ActionID"], Params: message, Status: "Success"}, err
