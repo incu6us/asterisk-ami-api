@@ -12,4 +12,7 @@ script:
   - go build -v .
 
 after_success:
-  - curl -i -H "$AUTH" "$DEPLOY_URL"
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      curl -i -H "$AUTH" "$DEPLOY_URL"
+    fi
+
