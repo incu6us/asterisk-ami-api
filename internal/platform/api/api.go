@@ -1,9 +1,9 @@
 package api
 
 import (
-	"net/http"
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/api/handler"
+	"net/http"
 )
 
 const (
@@ -25,7 +25,7 @@ func NewHandler() *mux.Router {
 
 	for _, api := range apis {
 		router.
-		PathPrefix(PATH_PREFIX).
+			PathPrefix(PATH_PREFIX).
 			Methods(api.Method).
 			Path(api.Pattern).
 			Name(api.Name).
@@ -47,5 +47,11 @@ var apis = APIs{
 		"POST",
 		"/modem/send/sms/{modem}/{MSISDN}",
 		handler.GetHandler().SendSms,
+	},
+	API{
+		"ready",
+		"GET",
+		"/ready",
+		handler.GetHandler().Ready,
 	},
 }

@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"net/http"
 	"encoding/json"
-	"github.com/op/go-logging"
-	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
+	"github.com/bit4bit/gami"
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
-	"strconv"
-	"github.com/bit4bit/gami"
+	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
+	"github.com/op/go-logging"
 	"io/ioutil"
+	"net/http"
+	"strconv"
 )
 
 type apiHandler struct {
@@ -64,7 +64,7 @@ func (a *apiHandler) Test(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
+	//defer r.Body.Close()
 
 	var err error
 
@@ -101,7 +101,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 }
 
 func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
+	//defer r.Body.Close()
 
 	var err error
 	var body []byte
@@ -111,7 +111,7 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	if body, err = ioutil.ReadAll(r.Body); err != nil {
 		a.print(w, r, err)
-		return 
+		return
 	}
 
 	var params = make(map[string]string)
@@ -131,10 +131,16 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 	a.print(w, r, resp)
 }
 
+// simple check which improve, that server is running
+func (a *apiHandler) Ready(w http.ResponseWriter, r *http.Request){
+	a.print(w, r, "Service is up and running")
+}
+
 type ApiHandler interface {
 	Test(w http.ResponseWriter, r *http.Request)
 	CallFromSipToMSISDN(http.ResponseWriter, *http.Request)
 	SendSms(w http.ResponseWriter, r *http.Request)
+	Ready(w http.ResponseWriter, r *http.Request)
 }
 
 func GetHandler() ApiHandler {

@@ -11,16 +11,16 @@ import (
 
 // TomlConfig - config structure
 type TomlConfig struct {
-	General struct{
+	General struct {
 		Listen string
 	}
 	Ami struct {
-		Host string
-		Port int
+		Host     string
+		Port     int
 		Username string
 		Password string
 	} `toml:"ami"`
-	Asterisk struct{
+	Asterisk struct {
 		Context string
 	}
 }
