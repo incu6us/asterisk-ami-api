@@ -24,12 +24,21 @@ func NewHandler() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	for _, api := range apis {
-		router.
+		if api.Name != "ready" {
+			router.
 			PathPrefix(PATH_PREFIX).
-			Methods(api.Method).
-			Path(api.Pattern).
-			Name(api.Name).
-			Handler(api.HandlerFunc)
+				Methods(api.Method).
+				Path(api.Pattern).
+				Name(api.Name).
+				Handler(api.HandlerFunc)
+		}else{
+			router.
+			PathPrefix(PATH_PREFIX).
+				Methods(api.Method).
+				Path(api.Pattern).
+				Name(api.Name).
+				Handler(api.HandlerFunc)
+		}
 	}
 
 	return router
