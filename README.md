@@ -11,6 +11,14 @@
     - MSISDN - msisdn number
     - async - asynchronous call. default: `false` ( value: `true` || `false` )
 
+- playback:
+    ```
+    curl -i "http://localhost:3000/api/v1/playback/{MSISDN}/{FILE-TO-PLAY}?async={async}"
+    ```
+    - MSISDN - msisdn number
+    - FILE-TO-PLAY - file in gsm-format
+    - async - asynchronous call. default: `false` ( value: `true` || `false` )
+
 
 - sms:
     ```

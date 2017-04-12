@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/api/handler"
 	"net/http"
+	"time"
 )
 
 const (
@@ -19,9 +20,10 @@ type API struct {
 
 type APIs []API
 
-func NewHandler() *mux.Router {
+func NewHandler() http.Handler {
 
 	router := mux.NewRouter().StrictSlash(true)
+	muxMiddleware := http.TimeoutHandler(router, time.Second*30, "Server timeout!")
 
 	for _, api := range apis {
 		if api.Name != "ready" {
@@ -41,7 +43,7 @@ func NewHandler() *mux.Router {
 		}
 	}
 
-	return router
+	return muxMiddleware
 }
 
 var apis = APIs{
@@ -50,6 +52,12 @@ var apis = APIs{
 		"GET",
 		"/call/{SIPID}/{MSISDN}", // ?async=false # default
 		handler.GetHandler().CallFromSipToMSISDN,
+	},
+	API{
+		"playbackAdvertisement",
+		"GET",
+		"/playback/{MSISDN}/{FILE}", // ?async=false # default
+		handler.GetHandler().PlaybackAdvertisement,
 	},
 	API{
 		"sendSMS",
