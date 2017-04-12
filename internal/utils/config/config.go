@@ -21,7 +21,8 @@ type TomlConfig struct {
 		Password string
 	} `toml:"ami"`
 	Asterisk struct {
-		Context string
+		Context string `toml:"call-context"`
+		PlaybackContext string `toml:"playback-context"`
 	}
 }
 

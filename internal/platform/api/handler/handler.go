@@ -64,7 +64,6 @@ func (a *apiHandler) Test(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request) {
-	//defer r.Body.Close()
 
 	var err error
 
@@ -88,9 +87,52 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 	params["Exten"] = msisdn
 	params["Priority"] = "1"
 
+	if async {
+		params["Async"] = "true"
+	}
+
 	log.Debug("Originate: %v", params)
 
-	if amiResponse, err = a.amiClient.Originate(params, async); err != nil {
+	if amiResponse, err = a.amiClient.Originate(params); err != nil {
+		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		a.print(w, r, err)
+		return
+	}
+
+	a.print(w, r, amiResponse)
+
+}
+
+func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Request) {
+	var err error
+
+	vars := mux.Vars(r)
+
+	audioFile := vars["FILE"]
+	msisdn := vars["MSISDN"]
+	async, _ := strconv.ParseBool(r.URL.Query().Get("async"))
+
+	var amiResponse interface{}
+
+	log.Debug("vars", vars, async)
+
+	var params = make(map[string]string)
+	params["Channel"] = "local/"+msisdn+"@"+conf.Asterisk.Context
+	params["CallerID"] = "playback_" + msisdn
+	params["MaxRetries"] = "5"
+	params["RetryTime"] = "10"
+	params["WaitTime"] = "20"
+	params["Context"] = conf.Asterisk.PlaybackContext
+	params["Priority"] = "1"
+	params["Variable"] = "AudioFile="+audioFile
+
+	if async {
+		params["Async"] = "true"
+	}
+
+	log.Debug("Originate: %v", params)
+
+	if amiResponse, err = a.amiClient.Originate(params); err != nil {
 		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 		a.print(w, r, err)
 		return
@@ -139,6 +181,7 @@ func (a *apiHandler) Ready(w http.ResponseWriter, r *http.Request){
 type ApiHandler interface {
 	Test(w http.ResponseWriter, r *http.Request)
 	CallFromSipToMSISDN(http.ResponseWriter, *http.Request)
+	PlaybackAdvertisement(http.ResponseWriter, *http.Request)
 	SendSms(w http.ResponseWriter, r *http.Request)
 	Ready(w http.ResponseWriter, r *http.Request)
 }
