@@ -28,7 +28,7 @@ const (
 var (
 	//amiResponse *gami.AMIResponse
 	hendler *apiHandler
-	log     = logging.MustGetLogger("main")
+	l       = logging.MustGetLogger("main")
 	conf    = config.GetConfig()
 )
 
@@ -38,9 +38,9 @@ func (a *apiHandler) amiInit() {
 
 	a.amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
 	if err = a.amiClient.Run(); err != nil {
-		log.Error("Error:", err)
+		l.Error("Error:", err)
 	} else {
-		log.Info("AMI connection established")
+		l.Info("AMI connection established")
 	}
 
 }
@@ -54,7 +54,7 @@ func (a apiHandler) print(w http.ResponseWriter, r *http.Request, message interf
 	a.setJsonHeader(w)
 
 	if encodeError := json.NewEncoder(w).Encode(response{message}); encodeError != nil {
-		log.Warning("Parse message error", encodeError)
+		l.Warning("Parse message error", encodeError)
 	}
 }
 
@@ -75,7 +75,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	var amiResponse interface{}
 
-	log.Debug("vars", vars, async)
+	l.Debug("vars", vars, async)
 
 	var params = make(map[string]string)
 	params["Channel"] = "SIP/" + sipId
@@ -91,10 +91,10 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 		params["Async"] = "true"
 	}
 
-	log.Debug("Originate: %v", params)
+	l.Debug("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 		a.print(w, r, err)
 		return
 	}
@@ -114,26 +114,26 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	var amiResponse interface{}
 
-	log.Debug("vars", vars, async)
+	l.Debug("vars", vars, async)
 
 	var params = make(map[string]string)
-	params["Channel"] = "local/"+msisdn+"@"+conf.Asterisk.Context
+	params["Channel"] = "local/" + msisdn + "@" + conf.Asterisk.Context
 	params["CallerID"] = "playback_" + msisdn
 	params["MaxRetries"] = "5"
 	params["RetryTime"] = "10"
 	params["WaitTime"] = "20"
 	params["Context"] = conf.Asterisk.PlaybackContext
 	params["Priority"] = "1"
-	params["Variable"] = "AudioFile="+audioFile
+	params["Variable"] = "AudioFile=" + audioFile
 
 	if async {
 		params["Async"] = "true"
 	}
 
-	log.Debug("Originate: %v", params)
+	l.Debug("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 		a.print(w, r, err)
 		return
 	}
@@ -161,10 +161,10 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 	params["Number"] = vars["MSISDN"]
 	params["Message"] = string(body)
 
-	log.Debug("Send SMS: %v", params)
+	l.Debug("Send SMS: %v", params)
 
 	if amiResponse, err = a.amiClient.CustomAction("DongleSendSMS", params); err != nil {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 		a.print(w, r, err)
 		return
 	}
@@ -174,7 +174,7 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 }
 
 // simple check which improve, that server is running
-func (a *apiHandler) Ready(w http.ResponseWriter, r *http.Request){
+func (a *apiHandler) Ready(w http.ResponseWriter, r *http.Request) {
 	a.print(w, r, "Service is up and running")
 }
 
