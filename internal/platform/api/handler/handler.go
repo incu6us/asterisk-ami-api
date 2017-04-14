@@ -26,9 +26,7 @@ const (
 )
 
 var (
-	//amiResponse *gami.AMIResponse
 	hendler *apiHandler
-	//l       = logging.MustGetLogger("handler")
 	conf = config.GetConfig()
 )
 
@@ -147,7 +145,7 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	var body []byte
-	var amiResponse <-chan *gami.AMIResponse
+	var amiResponse *gami.AMIResponse
 
 	vars := mux.Vars(r)
 
@@ -169,8 +167,8 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := <-amiResponse
-	a.print(w, r, resp)
+	//resp := <-amiResponse
+	a.print(w, r, amiResponse)
 }
 
 // simple check which improve, that server is running

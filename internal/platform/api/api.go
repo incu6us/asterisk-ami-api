@@ -4,10 +4,12 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/api/handler"
 	"net/http"
+	"time"
 )
 
 const (
 	PATH_PREFIX = "/api/v1/"
+	HTTP_TIMEOUT = 120 * time.Second
 )
 
 type API struct {
@@ -22,6 +24,7 @@ type APIs []API
 func NewHandler() http.Handler {
 
 	router := mux.NewRouter().StrictSlash(true)
+	middlewareHandler := http.TimeoutHandler(router, HTTP_TIMEOUT, "Server timedout!")
 
 	for _, api := range apis {
 		if api.Name != "ready" {
@@ -41,7 +44,7 @@ func NewHandler() http.Handler {
 		}
 	}
 
-	return router
+	return middlewareHandler
 }
 
 var apis = APIs{
