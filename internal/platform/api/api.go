@@ -9,6 +9,7 @@ import (
 
 const (
 	PATH_PREFIX = "/api/v1/"
+	SRV_TIMEOUT = time.Second*120
 )
 
 type API struct {
@@ -23,7 +24,7 @@ type APIs []API
 func NewHandler() http.Handler {
 
 	router := mux.NewRouter().StrictSlash(true)
-	muxMiddleware := http.TimeoutHandler(router, time.Second*30, "Server timeout!")
+	muxMiddleware := http.TimeoutHandler(router, SRV_TIMEOUT, "Server timeout!")
 
 	for _, api := range apis {
 		if api.Name != "ready" {

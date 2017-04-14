@@ -11,6 +11,6 @@ script:
   - go test -v .
   - go build -v .
 
-#after_success:
-#  - test $TRAVIS_PULL_REQUEST = false && if [ "$TRAVIS_BRANCH" == "master" ];then curl -i -H "$AUTH" "$DEPLOY_URL"; fi; exit 0
+after_success:
+  - test $TRAVIS_PULL_REQUEST = false && if [ "$TRAVIS_BRANCH" == "master" ];then curl -i -H "$AUTH" "$DEPLOY_URL"; fi; exit 0
 
