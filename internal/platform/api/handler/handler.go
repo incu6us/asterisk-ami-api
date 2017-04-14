@@ -91,7 +91,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 		params["Async"] = "true"
 	}
 
-	log.Debug("Originate: %v", params)
+	l.Debug("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
 		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
@@ -133,7 +133,7 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 	l.Debug("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
 		a.print(w, r, err)
 		return
 	}
