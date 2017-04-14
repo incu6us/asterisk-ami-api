@@ -13,7 +13,7 @@ import (
 
 type apiHandler struct {
 	ContentType string
-	amiClient   ami.AMI
+	//amiClient   ami.AMI
 }
 
 type response struct {
@@ -25,16 +25,17 @@ const (
 )
 
 var (
-	hendler *apiHandler
-	conf = config.GetConfig()
+	handler   *apiHandler
+	conf      = config.GetConfig()
+	amiClient ami.AMI
 )
 
 func (a *apiHandler) amiInit() {
 	var err error
 	var host = conf.Ami.Host + ":" + strconv.Itoa(conf.Ami.Port)
 
-	a.amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
-	if err = a.amiClient.Run(); err != nil {
+	amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
+	if err = amiClient.Run(); err != nil {
 		log.Println("Error:", err)
 	} else {
 		log.Println("AMI connection established")
@@ -90,14 +91,14 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	log.Println("Originate: %v", params)
 
-	amiResponse, err := a.amiClient.Originate(params);
+	amiResponse, err := amiClient.Originate(params)
 	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
 
-	a.print(w, r, <-amiResponse)
+	a.print(w, r, amiResponse)
 
 }
 
@@ -128,15 +129,16 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	log.Printf("Originate: %v", params)
 
-	amiResponse, err := a.amiClient.Originate(params);
+	log.Println(amiClient)
+	amiResponse, err := amiClient.Originate(params)
 	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
 
-	a.print(w, r, <-amiResponse)
-
+	log.Println("---")
+	a.print(w, r, amiResponse)
 }
 
 func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
@@ -160,15 +162,14 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Send SMS: %v", params)
 
-	amiResponse, err := a.amiClient.CustomAction("DongleSendSMS", params);
+	amiResponse, err := amiClient.CustomAction("DongleSendSMS", params)
 	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
 
-	resp := <-amiResponse
-	a.print(w, r, resp)
+	a.print(w, r, amiResponse)
 }
 
 // simple check which improve, that server is running
@@ -186,10 +187,10 @@ type ApiHandler interface {
 
 func GetHandler() ApiHandler {
 
-	if hendler == nil {
-		hendler = &apiHandler{ContentType: CONTENT_TYPE}
-		hendler.amiInit()
+	if handler == nil {
+		handler = &apiHandler{ContentType: CONTENT_TYPE}
+		handler.amiInit()
 	}
 
-	return hendler
+	return handler
 }
