@@ -2,7 +2,6 @@ package ami
 
 import (
 	"github.com/bit4bit/gami"
-	//"github.com/op/go-logging"
 	"log"
 	"math/rand"
 	"strings"

@@ -1,22 +1,31 @@
 package main
 
 import (
-	"github.com/op/go-logging"
-
-	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
-
-	"net/http"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/api"
+	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
+	"log"
+	"net/http"
+	"time"
+)
+
+const (
+	HTTP_TIMEOUT = 120 * time.Second
 )
 
 func main() {
 
-	var log = logging.MustGetLogger("main")
 	var conf = config.GetConfig()
 
 	var err error
 
-	if err = http.ListenAndServe(conf.General.Listen, api.NewHandler()); err != nil {
+	srv := &http.Server{
+		Addr:         conf.General.Listen,
+		ReadTimeout:  HTTP_TIMEOUT,
+		WriteTimeout: HTTP_TIMEOUT,
+		Handler:      api.NewHandler(),
+	}
+
+	if err = srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }
