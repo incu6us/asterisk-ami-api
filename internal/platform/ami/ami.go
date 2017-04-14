@@ -17,7 +17,6 @@ type ami struct {
 
 var (
 	amiClient *gami.AMIClient
-	//log       = logging.MustGetLogger("ami")
 )
 
 func (a *ami) randGenSuffix(i ...int) string {
