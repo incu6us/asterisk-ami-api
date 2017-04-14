@@ -123,7 +123,7 @@ type AMI interface {
 	Originate(params map[string]string) (*gami.AMIResponse, error)
 }
 
-func GetAMI(host, user, pass string) AMI {
+func GetAMIGami(host, user, pass string) AMI {
 	return &ami{
 		host: host,
 		user: user,
