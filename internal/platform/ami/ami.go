@@ -85,8 +85,8 @@ func (a *ami) Run() error {
 	return err
 }
 
-func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gami.AMIResponse, error) {
-	var actionChanResponse <-chan *gami.AMIResponse
+func (a *ami) CustomAction(action string, params map[string]string) (*gami.AMIResponse, error) {
+	var actionChanResponse *gami.AMIResponse
 	var amiParams = make(map[string]string)
 	var err error
 
@@ -98,7 +98,7 @@ func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gam
 		}
 	}
 
-	if actionChanResponse, err = amiClient.AsyncAction(action, amiParams); err != nil {
+	if actionChanResponse, err = amiClient.Action(action, amiParams); err != nil {
 		return nil, err
 	}
 
@@ -108,20 +108,19 @@ func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gam
 //func (a *ami) Originate(params map[string]string, async bool) (interface{}, error) {
 func (a *ami) Originate(params map[string]string) (interface{}, error) {
 	var actionResponse *gami.AMIResponse
-	var actionAsyncResponse <-chan *gami.AMIResponse
+	//var actionAsyncResponse <-chan *gami.AMIResponse
 	var err error
 
-	if actionAsyncResponse, err = a.CustomAction("Originate", params); err != nil {
-		log.Printf("AMI Action error! Error: %v, AMI Response Status: %s", err, actionAsyncResponse)
+	if actionResponse, err = a.CustomAction("Originate", params); err != nil {
+		log.Printf("AMI Action error! Error: %v, AMI Response Status: %s", err, actionResponse)
 	}
 
-	actionResponse = <-actionAsyncResponse
 	return actionResponse, err
 }
 
 type AMI interface {
 	Run() error
-	CustomAction(action string, params map[string]string) (<-chan *gami.AMIResponse, error)
+	CustomAction(action string, params map[string]string) (*gami.AMIResponse, error)
 	Originate(params map[string]string) (interface{}, error)
 }
 
