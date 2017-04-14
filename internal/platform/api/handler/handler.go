@@ -34,7 +34,8 @@ func (a *apiHandler) amiInit() {
 	var err error
 	var host = conf.Ami.Host + ":" + strconv.Itoa(conf.Ami.Port)
 
-	amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
+	amiClient = ami.GetAMIGami(host, conf.Ami.Username, conf.Ami.Password)
+	//amiClient = ami.GetAMIAmigo(host, conf.Ami.Username, conf.Ami.Password)
 	if err = amiClient.Run(); err != nil {
 		log.Println("Error:", err)
 	} else {

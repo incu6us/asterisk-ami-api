@@ -1,14 +1,26 @@
-hash: 7470459020dd4bfa0dc17695b57d08f338e01bba9abfab4fca05a929d9fdc42a
-updated: 2017-04-14T16:39:03.278419662+03:00
+hash: d767a09dfb00173c9eeed1b90868477664322a768aca9240baddb172c4ddf263
+updated: 2017-04-14T22:18:41.04957775+03:00
 imports:
 - name: github.com/abbot/go-http-auth
   version: efc9484eee77263a11f158ef4f30fcc30298a942
 - name: github.com/bit4bit/gami
   version: 94e6a8a29ab83a23f191883d7ded0b01269b5717
+  subpackages:
+  - event
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/handlers
   version: 3a5767ca75ece5f7f1440b1d16975247f8d8b221
 - name: github.com/gorilla/mux
   version: 392c28fe23e1c45ddba891b0320b3b5df220beea
+- name: github.com/ivahaev/amigo
+  version: 912d50d5f88d969a27d93eb4501117d95bd7b29a
+  subpackages:
+  - uuid
+- name: github.com/naoina/go-stringutil
+  version: 6b638e95a32d0c1131db0e7fe83775cbea4a0d0b
 - name: github.com/naoina/toml
   version: 751171607256bb66e64c9f0220c00662420c38e9
+  subpackages:
+  - ast
 testImports: []
