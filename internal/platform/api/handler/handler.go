@@ -130,7 +130,7 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 		params["Async"] = "true"
 	}
 
-	l.Debug("Originate: %v", params)
+	log.Printf("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
