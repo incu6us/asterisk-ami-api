@@ -2,7 +2,8 @@ package ami
 
 import (
 	"github.com/bit4bit/gami"
-	"github.com/op/go-logging"
+	//"github.com/op/go-logging"
+	"log"
 	"math/rand"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ type ami struct {
 
 var (
 	amiClient *gami.AMIClient
-	log       = logging.MustGetLogger("ami")
+	//log       = logging.MustGetLogger("ami")
 )
 
 func (a *ami) randGenSuffix(i ...int) string {
@@ -42,7 +43,7 @@ func (a *ami) Run() error {
 
 	if amiClient == nil {
 		if amiClient, err = gami.Dial(a.Host); err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 			return err
 		}
 
@@ -56,7 +57,7 @@ func (a *ami) Run() error {
 				select {
 				//handle network errors
 				case err := <-amiClient.NetError:
-					log.Error("Network Error:", err)
+					log.Panic("Network Error:", err)
 					//try new connection every second
 					<-time.After(time.Second)
 					if err := amiClient.Reconnect(); err == nil {
@@ -65,7 +66,7 @@ func (a *ami) Run() error {
 					}
 
 				case err := <-amiClient.Error:
-					log.Error("error:", err)
+					log.Panic("error:", err)
 					//wait events and process
 					//case ev := <-amiClient.Events:
 					//	log.Error("Event Detect:", *ev)
@@ -77,7 +78,7 @@ func (a *ami) Run() error {
 
 		if a.User != "" {
 			if err = amiClient.Login(a.User, a.Pass); err != nil {
-				log.Error("AMI login failed: %v", err)
+				log.Panicf("AMI login failed: %v", err)
 				return err
 			}
 		}
@@ -113,7 +114,7 @@ func (a *ami) Originate(params map[string]string) (interface{}, error) {
 	var err error
 
 	if actionAsyncResponse, err = a.CustomAction("Originate", params); err != nil {
-		log.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		log.Printf("AMI Action error! Error: %v, AMI Response Status: %s", err, actionAsyncResponse)
 	}
 
 	actionResponse = <-actionAsyncResponse
