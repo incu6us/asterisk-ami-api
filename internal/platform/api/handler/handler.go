@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
-	"github.com/op/go-logging"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -28,8 +28,8 @@ const (
 var (
 	//amiResponse *gami.AMIResponse
 	hendler *apiHandler
-	l       = logging.MustGetLogger("handler")
-	conf    = config.GetConfig()
+	//l       = logging.MustGetLogger("handler")
+	conf = config.GetConfig()
 )
 
 func (a *apiHandler) amiInit() {
@@ -38,9 +38,9 @@ func (a *apiHandler) amiInit() {
 
 	a.amiClient = ami.GetAMI(host, conf.Ami.Username, conf.Ami.Password)
 	if err = a.amiClient.Run(); err != nil {
-		l.Error("Error:", err)
+		log.Println("Error:", err)
 	} else {
-		l.Info("AMI connection established")
+		log.Println("AMI connection established")
 	}
 
 }
@@ -54,7 +54,7 @@ func (a apiHandler) print(w http.ResponseWriter, r *http.Request, message interf
 	a.setJsonHeader(w)
 
 	if encodeError := json.NewEncoder(w).Encode(response{message}); encodeError != nil {
-		l.Warning("Parse message error", encodeError)
+		log.Println("Parse message error", encodeError)
 	}
 }
 
@@ -75,7 +75,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	var amiResponse interface{}
 
-	l.Debug("vars", vars, async)
+	log.Println("vars", vars, async)
 
 	var params = make(map[string]string)
 	params["Channel"] = "SIP/" + sipId
@@ -91,10 +91,10 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 		params["Async"] = "true"
 	}
 
-	l.Debug("Originate: %v", params)
+	log.Println("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
-		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err)
 		return
 	}
@@ -114,7 +114,7 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	var amiResponse interface{}
 
-	l.Debug("vars", vars, async)
+	log.Println("vars", vars, async)
 
 	var params = make(map[string]string)
 	params["Channel"] = "local/" + msisdn + "@" + conf.Asterisk.Context
@@ -133,7 +133,7 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 	l.Debug("Originate: %v", params)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
-		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err)
 		return
 	}
@@ -161,10 +161,10 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 	params["Number"] = vars["MSISDN"]
 	params["Message"] = string(body)
 
-	l.Debug("Send SMS: %v", params)
+	log.Printf("Send SMS: %v", params)
 
 	if amiResponse, err = a.amiClient.CustomAction("DongleSendSMS", params); err != nil {
-		l.Error("AMI Action error! Error: %v, AMI Response Status: %s", err)
+		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err)
 		return
 	}
