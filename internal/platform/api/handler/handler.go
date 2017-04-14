@@ -70,7 +70,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 	msisdn := vars["MSISDN"]
 	async, _ := strconv.ParseBool(r.URL.Query().Get("async"))
 
-	var amiResponse interface{}
+	//var amiResponse interface{}
 
 	log.Println("vars", vars, async)
 
@@ -90,13 +90,14 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	log.Println("Originate: %v", params)
 
-	if amiResponse, err = a.amiClient.Originate(params); err != nil {
+	amiResponse, err := a.amiClient.Originate(params);
+	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
 
-	a.print(w, r, amiResponse)
+	a.print(w, r, <-amiResponse)
 
 }
 
@@ -108,8 +109,6 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 	audioFile := vars["FILE"]
 	msisdn := vars["MSISDN"]
 	async, _ := strconv.ParseBool(r.URL.Query().Get("async"))
-
-	var amiResponse interface{}
 
 	log.Println("vars", vars, async)
 
@@ -129,13 +128,14 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	log.Printf("Originate: %v", params)
 
-	if amiResponse, err = a.amiClient.Originate(params); err != nil {
+	amiResponse, err := a.amiClient.Originate(params);
+	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
 
-	a.print(w, r, amiResponse)
+	a.print(w, r, <-amiResponse)
 
 }
 

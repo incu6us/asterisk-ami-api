@@ -105,19 +105,19 @@ func (a *ami) CustomAction(action string, params map[string]string) (<-chan *gam
 }
 
 //func (a *ami) Originate(params map[string]string, async bool) (interface{}, error) {
-func (a *ami) Originate(params map[string]string) (interface{}, error) {
-	actionResponse, err := a.CustomAction("Originate", params);
+func (a *ami) Originate(params map[string]string) (<-chan *gami.AMIResponse, error) {
+	actionResponse, err := a.CustomAction("Originate", params)
 	if err != nil {
 		log.Printf("AMI Action error! Error: %v, AMI Response Status: %s", err, actionResponse)
 	}
 
-	return <-actionResponse, err
+	return actionResponse, err
 }
 
 type AMI interface {
 	Run() error
 	CustomAction(action string, params map[string]string) (<-chan *gami.AMIResponse, error)
-	Originate(params map[string]string) (interface{}, error)
+	Originate(params map[string]string) (<-chan *gami.AMIResponse, error)
 }
 
 func GetAMI(host, user, pass string) AMI {
