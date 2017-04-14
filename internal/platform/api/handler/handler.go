@@ -26,9 +26,7 @@ const (
 )
 
 var (
-	//amiResponse *gami.AMIResponse
 	hendler *apiHandler
-	//l       = logging.MustGetLogger("handler")
 	conf = config.GetConfig()
 )
 
