@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/bit4bit/gami"
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
@@ -93,7 +92,7 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
-		a.print(w, r, err)
+		a.print(w, r, err.Error())
 		return
 	}
 
@@ -132,7 +131,7 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	if amiResponse, err = a.amiClient.Originate(params); err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
-		a.print(w, r, err)
+		a.print(w, r, err.Error())
 		return
 	}
 
@@ -145,7 +144,7 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	var body []byte
-	var amiResponse *gami.AMIResponse
+	//var amiResponse *gami.AMIResponse
 
 	vars := mux.Vars(r)
 
@@ -161,14 +160,15 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Send SMS: %v", params)
 
-	if amiResponse, err = a.amiClient.CustomAction("DongleSendSMS", params); err != nil {
+	amiResponse, err := a.amiClient.CustomAction("DongleSendSMS", params);
+	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
-		a.print(w, r, err)
+		a.print(w, r, err.Error())
 		return
 	}
 
-	//resp := <-amiResponse
-	a.print(w, r, amiResponse)
+	resp := <-amiResponse
+	a.print(w, r, resp)
 }
 
 // simple check which improve, that server is running
