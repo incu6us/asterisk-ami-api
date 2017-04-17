@@ -42,7 +42,14 @@ func (a *amiAmigo) Run() error {
 }
 
 func (a *amiAmigo) CustomAction(action string, params map[string]string) (map[string]string, error) {
-	return nil, nil
+	params["Action"] = action
+	resp, err := amigoClient.Action(params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (a *amiAmigo) Originate(params map[string]string) (map[string]string, error) {
