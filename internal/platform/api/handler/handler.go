@@ -27,20 +27,22 @@ const (
 var (
 	handler   *apiHandler
 	conf      = config.GetConfig()
-	amiClient ami.AMI
+	//amiClient   ami.AMI
+	amiClient ami.AMIA
 )
 
 func (a *apiHandler) amiInit() {
 	var err error
 	var host = conf.Ami.Host + ":" + strconv.Itoa(conf.Ami.Port)
 
-	amiClient = ami.GetAMIGami(host, conf.Ami.Username, conf.Ami.Password)
-	//amiClient = ami.GetAMIAmigo(host, conf.Ami.Username, conf.Ami.Password)
+	//amiClient = ami.GetAMIGami(host, conf.Ami.Username, conf.Ami.Password)
+	amiClient = ami.GetAMIAmigo(host, conf.Ami.Username, conf.Ami.Password)
 	if err = amiClient.Run(); err != nil {
 		log.Println("Error:", err)
-	} else {
-		log.Println("AMI connection established")
 	}
+	//else {
+	//	log.Println("AMI connection established")
+	//}
 
 }
 
@@ -130,10 +132,9 @@ func (a *apiHandler) PlaybackAdvertisement(w http.ResponseWriter, r *http.Reques
 
 	log.Printf("Originate: %v", params)
 
-	log.Println(amiClient)
 	amiResponse, err := amiClient.Originate(params)
 	if err != nil {
-		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
+		log.Println("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
 		a.print(w, r, err.Error())
 		return
 	}
