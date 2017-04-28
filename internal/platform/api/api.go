@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	PATH_PREFIX = "/api/v1/"
+	PATH_PREFIX  = "/api/v1/"
 	HTTP_TIMEOUT = 120 * time.Second
 )
 
@@ -29,14 +29,14 @@ func NewHandler() http.Handler {
 	for _, api := range apis {
 		if api.Name != "ready" {
 			router.
-			PathPrefix(PATH_PREFIX).
+				PathPrefix(PATH_PREFIX).
 				Methods(api.Method).
 				Path(api.Pattern).
 				Name(api.Name).
 				Handler(api.HandlerFunc)
-		}else{
+		} else {
 			router.
-			PathPrefix(PATH_PREFIX).
+				PathPrefix(PATH_PREFIX).
 				Methods(api.Method).
 				Path(api.Pattern).
 				Name(api.Name).
@@ -65,6 +65,12 @@ var apis = APIs{
 		"POST",
 		"/modem/send/sms/{modem}/{MSISDN}",
 		handler.GetHandler().SendSms,
+	},
+	API{
+		"getStatByMSISDN",
+		"GET",
+		"/cdr/search/{MSISDN}",
+		handler.GetHandler().GetStatByMSISDN,
 	},
 	API{
 		"ready",

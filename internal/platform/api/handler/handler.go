@@ -5,6 +5,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
 	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
+
+	"github.com/incu6us/asterisk-ami-api/internal/platform/database"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -25,8 +27,8 @@ const (
 )
 
 var (
-	handler   *apiHandler
-	conf      = config.GetConfig()
+	handler *apiHandler
+	conf    = config.GetConfig()
 	//amiClient   ami.AMI
 	amiClient ami.AMIA
 )
@@ -174,6 +176,32 @@ func (a *apiHandler) SendSms(w http.ResponseWriter, r *http.Request) {
 	a.print(w, r, amiResponse)
 }
 
+func (a *apiHandler) GetStatByMSISDN(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	startdate := r.URL.Query().Get("startdate")
+	enddate := r.URL.Query().Get("enddate")
+
+	formatedCdrs := []database.CDR{}
+	cdrs := database.GetStatByMSISDN(vars["MSISDN"], startdate, enddate)
+	for _, cdr := range cdrs {
+		//log.Println(cdr.Calldate.Format("02-01-2006 15:04:05"))
+		formatedCdrs = append(formatedCdrs, database.CDR{
+			cdr.Calldate,
+			cdr.Calldate.Format("02-01-2006 15:04:05"),
+			cdr.Src,
+			cdr.Dst,
+			cdr.Dcontext,
+			cdr.Channel,
+			cdr.Dstchannel,
+			cdr.Lastapp,
+			cdr.Duration,
+			cdr.Billsec,
+			cdr.Uniqueid,
+		})
+	}
+	a.print(w, r, formatedCdrs)
+}
+
 // simple check which improve, that server is running
 func (a *apiHandler) Ready(w http.ResponseWriter, r *http.Request) {
 	a.print(w, r, "Service is up and running")
@@ -184,6 +212,7 @@ type ApiHandler interface {
 	CallFromSipToMSISDN(http.ResponseWriter, *http.Request)
 	PlaybackAdvertisement(http.ResponseWriter, *http.Request)
 	SendSms(w http.ResponseWriter, r *http.Request)
+	GetStatByMSISDN(w http.ResponseWriter, r *http.Request)
 	Ready(w http.ResponseWriter, r *http.Request)
 }
 

@@ -24,3 +24,12 @@
     ```
     curl -XPOST "http://localhost:3000/api/v1/modem/send/sms/{modem}/{MSISDN}" --data "test message"
     ```
+    
+- cdr:
+    ```
+    curl -XPOST "http://localhost:3000/api/v1/cdr/search/0937530214"
+    ```
+    or
+    ```
+    curl -XPOST "http://localhost:3000/api/v1/cdr/search/0937530214?startdate=2017-04-26&enddate=2017-04-26"
+    ```
