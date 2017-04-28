@@ -192,6 +192,7 @@ func (a *apiHandler) GetStatByMSISDN(w http.ResponseWriter, r *http.Request) {
 			cdr.Dst,
 			cdr.Dcontext,
 			cdr.Channel,
+			cdr.Disposition,
 			cdr.Dstchannel,
 			cdr.Lastapp,
 			cdr.Duration,
