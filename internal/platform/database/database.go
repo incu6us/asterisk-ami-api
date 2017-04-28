@@ -16,6 +16,7 @@ type CDR struct {
 	Dst          string    `json:"dst"`
 	Dcontext     string    `json:"dcontext"`
 	Channel      string    `json:"channel"`
+	Disposition  string    `json:"disposition"`
 	Dstchannel   string    `json:"dstchannel"`
 	Lastapp      string    `json:"lastapp"`
 	Duration     int       `json:"duration"`
