@@ -20,8 +20,15 @@ type TomlConfig struct {
 		Username string
 		Password string
 	} `toml:"ami"`
+	DB struct {
+		Host     string
+		Database string
+		Username string
+		Password string
+		Debug    bool
+	} `toml:"db"`
 	Asterisk struct {
-		Context string `toml:"call-context"`
+		Context         string `toml:"call-context"`
 		PlaybackContext string `toml:"playback-context"`
 	}
 }
