@@ -27,9 +27,9 @@
     
 - cdr:
     ```
-    curl -XPOST "http://localhost:3000/api/v1/cdr/search/0937530214"
+    curl -XGET "http://localhost:3000/api/v1/cdr/search/0937530214"
     ```
     or
     ```
-    curl -XPOST "http://localhost:3000/api/v1/cdr/search/0937530214?startdate=2017-04-26&enddate=2017-04-26"
+    curl -XGET "http://localhost:3000/api/v1/cdr/search/0937530214?startdate=2017-04-26&enddate=2017-04-26"
     ```
