@@ -69,7 +69,7 @@ var apis = APIs{
 	API{
 		"getStatByMSISDN",
 		"GET",
-		"/cdr/search/{MSISDN}",
+		"/cdr/search/{MSISDN}", //?startdate=2017-04-26&enddate=2017-04-26 || ?actionid=a3a17318-fc48-4aea-835d-619e0cda585e
 		handler.GetHandler().GetStatByMSISDN,
 	},
 	API{
