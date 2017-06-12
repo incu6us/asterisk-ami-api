@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/incu6us/asterisk-ami-api/internal/platform/ami"
-	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
-
 	"github.com/incu6us/asterisk-ami-api/internal/platform/database"
+	"github.com/incu6us/asterisk-ami-api/internal/utils/config"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -94,8 +93,6 @@ func (a *apiHandler) CallFromSipToMSISDN(w http.ResponseWriter, r *http.Request)
 		params["Async"] = "true"
 	}
 
-	log.Println("Originate: %v", params)
-
 	amiResponse, err := amiClient.Originate(params)
 	if err != nil {
 		log.Panicf("AMI Action error! Error: %v, AMI Response Status: %s", err, amiResponse)
@@ -180,9 +177,15 @@ func (a *apiHandler) GetStatByMSISDN(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	startdate := r.URL.Query().Get("startdate")
 	enddate := r.URL.Query().Get("enddate")
+	actionId := r.URL.Query().Get("actionid")
 
 	formatedCdrs := []database.CDR{}
-	cdrs := database.GetStatByMSISDN(vars["MSISDN"], startdate, enddate)
+	var cdrs []database.CDR
+	if actionId != "" {
+		cdrs = database.GetStatByActionID(vars["MSISDN"], actionId)
+	} else {
+		cdrs = database.GetStatByMSISDN(vars["MSISDN"], startdate, enddate)
+	}
 	for _, cdr := range cdrs {
 		//log.Println(cdr.Calldate.Format("02-01-2006 15:04:05"))
 		formatedCdrs = append(formatedCdrs, database.CDR{
@@ -198,6 +201,7 @@ func (a *apiHandler) GetStatByMSISDN(w http.ResponseWriter, r *http.Request) {
 			cdr.Duration,
 			cdr.Billsec,
 			cdr.Uniqueid,
+			cdr.Actionid,
 		})
 	}
 	a.print(w, r, formatedCdrs)

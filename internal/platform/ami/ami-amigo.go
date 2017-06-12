@@ -1,10 +1,11 @@
 package ami
 
 import (
+	"errors"
 	"github.com/ivahaev/amigo"
+	"github.com/ivahaev/amigo/uuid"
 	"log"
 	"strings"
-	"errors"
 )
 
 type amiAmigo struct {
@@ -53,7 +54,12 @@ func (a *amiAmigo) CustomAction(action string, params map[string]string) (map[st
 }
 
 func (a *amiAmigo) Originate(params map[string]string) (map[string]string, error) {
+	params["ActionID"] = uuid.NewV4()
+	params["Variable"] = "ActionID=" + params["ActionID"]
 	params["Action"] = "Originate"
+
+	log.Printf("Originate: %v", params)
+
 	resp, err := amigoClient.Action(params)
 	if err != nil {
 		log.Println(err)

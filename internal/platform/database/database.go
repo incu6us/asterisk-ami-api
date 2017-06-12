@@ -22,6 +22,7 @@ type CDR struct {
 	Duration     int       `json:"duration"`
 	Billsec      int       `json:"billsec"`
 	Uniqueid     string    `json:"uniqueid"`
+	Actionid     string    `json:"actionid"`
 }
 
 var dbInstance *gorm.DB
@@ -57,6 +58,20 @@ func GetStatByMSISDN(MSISDN, startdate, enddate string) []CDR {
 		query.Table("cdr").Where("calldate between ? and ? and (src=? or dst=?)",
 			startdate+" 00:00:00", enddate+" 23:59:00", MSISDN, MSISDN).Find(&cdrs)
 	}
+
+	return cdrs
+}
+
+func GetStatByActionID(MSISDN, actionID string) []CDR {
+	query, err := Connect(config.GetConfig())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cdrs := []CDR{}
+
+	query.Table("cdr").Where("(src=? or dst=?) and actionid=?", MSISDN, MSISDN, actionID).
+		Find(&cdrs)
 
 	return cdrs
 }
