@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/incu6us/asterisk-ami-api.svg)](https://travis-ci.org/incu6us/asterisk-ami-api)
-
-## asterisk-ami-api
+## asterisk-ami-api [![Build Status](https://travis-ci.org/incu6us/asterisk-ami-api.svg)](https://travis-ci.org/incu6us/asterisk-ami-api)
 
 ##### example:
 - call:
