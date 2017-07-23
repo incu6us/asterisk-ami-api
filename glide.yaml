@@ -1,4 +1,4 @@
-package: asterisk-custom-api
+package: asterisk-ami-api
 import:
 - package: github.com/naoina/toml
   version: ^0.1.0
