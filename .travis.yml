@@ -8,7 +8,9 @@ branches:
     - master
 
 script:
-  - go test -v .
+  - curl https://glide.sh/get | sh
+  - glide i
+  - go test -v $(go list ./... | grep -v /vendor/)
   - go build -v .
 
 after_success:
