@@ -1,4 +1,4 @@
-FROM golang:1.8
+FROM golang:1.8-alpine
 
 WORKDIR /go/src/github.com/incu6us/asterisk-ami-api
 COPY . .
