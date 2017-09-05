@@ -14,3 +14,5 @@ import:
   version: v1.0
 - package: github.com/go-sql-driver/mysql
   version: v1.3
+- package: github.com/caarlos0/env
+  version: v3.0
