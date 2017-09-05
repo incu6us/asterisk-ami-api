@@ -9,4 +9,4 @@ RUN rm -rf vendor
 
 EXPOSE 3000
 
-CMD ["asterisk-ami-api", "-conf", "api.conf"]
+CMD ["./asterisk-ami-api", "-conf", "api.conf"]
