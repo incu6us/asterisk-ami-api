@@ -34,17 +34,17 @@
 
 #### External vars(for [Dockerized image](https://hub.docker.com/r/incu6us/asterisk-ami-api)):
 ##### AMI config
-*AMI_HOST* - host, where AMI interface is located 
-*AMI_PORT* - AMI port
-*AMI_USER* - username
-*AMI_PASS* - password
+- *AMI_HOST* - host, where AMI interface is located
+- *AMI_PORT* - AMI port
+- *AMI_USER* - username
+- *AMI_PASS* - password
 
 ##### database config
-*DB_HOST* - database host ip
-*DB_DBNAME* - database name
-*DB_USER* - username
-*DB_PASS* - password
+- *DB_HOST* - database host ip
+- *DB_DBNAME* - database name
+- *DB_USER* - username
+- *DB_PASS* - password
 
 ##### asterisk dialplan config
-*ASTERISK_CONTEXT* - main dial context
-*ASTERISK_PLAYBACK_CONTEXT* - dialplan with playback
+- *ASTERISK_CONTEXT* - main dial context
+- *ASTERISK_PLAYBACK_CONTEXT* - dialplan with playback
