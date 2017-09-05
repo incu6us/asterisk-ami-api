@@ -1,6 +1,6 @@
 FROM golang:1.8
 
-WORKDIR /go/src/app
+WORKDIR /go/src/github.com/incu6us/asterisk-ami-api
 COPY . .
 RUN curl https://glide.sh/get | sh
 RUN glide i
