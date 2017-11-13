@@ -55,7 +55,10 @@ func (a *amiAmigo) CustomAction(action string, params map[string]string) (map[st
 
 func (a *amiAmigo) Originate(params map[string]string) (map[string]string, error) {
 	params["ActionID"] = uuid.NewV4()
-	params["Variable"] = "ActionID=" + params["ActionID"]
+
+	if _, ok := params["Variable"]; !ok {
+		params["Variable"] = "ActionID=" + params["ActionID"]
+	}
 	params["Action"] = "Originate"
 
 	log.Printf("Originate: %v", params)
